@@ -2,17 +2,10 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
-import plotly.graph_objects as go
 from datetime import datetime
 
 st.set_page_config(page_title="LOTOS 배송 리드타임 대시보드", page_icon="📊", layout="wide")
 
-# Grafana 스타일 다크 테마 커스텀 CSS
-st.markdown("""
-
-""", unsafe_allow_html=True)
-
-# 1~3차 LOTOS 실측 원천 데이터 (52건)
 DEFAULT_RAW_DATA = [
     {"주문번호":"260827D4C50435","출고완료시각":"2026-09-02","배송사출고시각":"2026-09-04","출발시각":"2026-09-04","도착시각":"2026-09-05","통관완료시각":"2026-09-08","배송완료시각":"2026-09-09","도도부현":"大阪府","이슈번호":"","확인필요유형":"3일 경과"},
     {"주문번호":"2608315070C676","출고완료시각":"2026-09-02","배송사출고시각":"2026-09-04","출발시각":"2026-09-04","도착시각":"2026-09-05","통관완료시각":"2026-09-08","배송완료시각":"2026-09-09","도도부현":"大阪府","이슈번호":"","확인필요유형":"3일 경과"},
@@ -68,11 +61,10 @@ DEFAULT_RAW_DATA = [
     {"주문번호":"260909D368C221","출고완료시각":"2026-09-15","배송사출고시각":"2026-09-16","출발시각":"2026-09-16","도착시각":"2026-09-17","통관완료시각":"2026-09-18","배송완료시각":"2026-09-22","도도부현":"北海道","이슈번호":"","확인필요유형":""}
 ]
 
-@st.cache_data
 def load_data(uploaded_file=None):
     if uploaded_file is not None:
         try:
-            if uploaded_file.name.endswith('.csv'):
+            if uploaded_file.name.endswith(".csv"):
                 df = pd.read_csv(uploaded_file)
             else:
                 df = pd.read_excel(uploaded_file)
@@ -83,58 +75,52 @@ def load_data(uploaded_file=None):
 
     def parse_d(col):
         if col in df.columns:
-            return pd.to_datetime(df[col].astype(str).str.replace(' ', '').str.replace('.', '-').str[:10])
+            return pd.to_datetime(df[col].astype(str).str.replace(" ", "").str.replace(".", "-").str[:10])
         return None
 
-    # 일자 파싱
-    df['d_out'] = parse_d('출고완료시각')
-    df['d_depart'] = parse_d('출발시각')
-    df['d_arrive'] = parse_d('도착시각')
-    df['d_customs'] = parse_d('통관완료시각')
-    df['d_delivery'] = parse_d('배송완료시각')
+    df["d_out"] = parse_d("출고완료시각")
+    df["d_depart"] = parse_d("출발시각")
+    df["d_arrive"] = parse_d("도착시각")
+    df["d_customs"] = parse_d("통관완료시각")
+    df["d_delivery"] = parse_d("배송완료시각")
 
-    # 리드타임 계산 (기준: 의왕물류센터 출고일 ~ 배송완료일)
-    df['총리드타임'] = (df['d_delivery'] - df['d_out']).dt.days
-    df['선적대기'] = (df['d_depart'] - df['d_out']).dt.days
-    df['국제운송'] = (df['d_arrive'] - df['d_depart']).dt.days
-    df['통관'] = (df['d_customs'] - df['d_arrive']).dt.days
-    df['라스트마일'] = (df['d_delivery'] - df['d_customs']).dt.days
+    df["총리드타임"] = (df["d_delivery"] - df["d_out"]).dt.days
+    df["선적대기"] = (df["d_depart"] - df["d_out"]).dt.days
+    df["국제운송"] = (df["d_arrive"] - df["d_depart"]).dt.days
+    df["통관"] = (df["d_customs"] - df["d_arrive"]).dt.days
+    df["라스트마일"] = (df["d_delivery"] - df["d_customs"]).dt.days
 
-    # 차수 정의
     def assign_batch(row):
-        d = row['d_out']
+        d = row["d_out"]
         if pd.isna(d):
-            return '1차'
-        if d <= pd.to_datetime('2026-09-02'):
-            return '1차'
-        elif d <= pd.to_datetime('2026-09-09'):
-            return '2차'
+            return "1차"
+        if d <= pd.to_datetime("2026-09-02"):
+            return "1차"
+        elif d <= pd.to_datetime("2026-09-09"):
+            return "2차"
         else:
-            return '3차'
+            return "3차"
 
-    df['차수'] = df.apply(assign_batch, axis=1)
+    df["차수"] = df.apply(assign_batch, axis=1)
 
-    # 지연 구간 식별
     def find_delay_segment(row):
         delays = []
-        if row['선적대기'] >= 2:
-            delays.append(f"선적대기({row['선적대기']}일)")
-        if row['통관'] >= 2:
-            delays.append(f"통관지연({row['통관']}일)")
-        if row['라스트마일'] >= 3:
-            delays.append(f"현지배송({row['라스트마일']}일)")
+        if row["선적대기"] >= 2:
+            delays.append("선적대기(" + str(int(row["선적대기"])) + "일)")
+        if row["통관"] >= 2:
+            delays.append("통관지연(" + str(int(row["통관"])) + "일)")
+        if row["라스트마일"] >= 3:
+            delays.append("현지배송(" + str(int(row["라스트마일"])) + "일)")
         return ", ".join(delays) if delays else "정상 소요"
 
-    df['지연구간'] = df.apply(find_delay_segment, axis=1)
+    df["지연구간"] = df.apply(find_delay_segment, axis=1)
 
-    # 리드타임 구간 (0~2일, 2~4일 ...)
     bins =
-    labels = ['0~2일', '2~4일', '4~6일', '6~8일', '8~10일', '10~15일', '15~20일', '20~30일', '30일+']
-    df['리드타임구간'] = pd.cut(df['총리드타임'], bins=bins, labels=labels, right=False)
+    labels = ["0~2일", "2~4일", "4~6일", "6~8일", "8~10일", "10~15일", "15~20일", "20~30일", "30일+"]
+    df["리드타임구간"] = pd.cut(df["총리드타임"], bins=bins, labels=labels, right=False)
 
     return df
 
-# 사이드바 설정
 st.sidebar.title("⚙️ 필터 및 설정")
 uploaded_file = st.sidebar.file_uploader("새 엑셀/CSV 데이터 업로드", type=["csv", "xlsx"])
 df_raw = load_data(uploaded_file)
@@ -143,37 +129,42 @@ batch_options = ["전체 (1~3차)", "1차 (8/27~9/2 출고)", "2차 (9/9 출고)
 selected_batch = st.sidebar.selectbox("조회 차수 선택", batch_options)
 
 if selected_batch == "1차 (8/27~9/2 출고)":
-    df = df_raw[df_raw['차수'] == '1차'].copy()
+    df = df_raw[df_raw["차수"] == "1차"].copy()
 elif selected_batch == "2차 (9/9 출고)":
-    df = df_raw[df_raw['차수'] == '2차'].copy()
+    df = df_raw[df_raw["차수"] == "2차"].copy()
 elif selected_batch == "3차 (9/15 출고)":
-    df = df_raw[df_raw['차수'] == '3차'].copy()
+    df = df_raw[df_raw["차수"] == "3차"].copy()
 else:
     df = df_raw.copy()
 
-# 메인 헤더
 st.title("📊 LOTOS 특송 리드타임 분석 대시보드")
-st.caption("기준: 의왕물류센터 출고일 ~ 배송 완료일 | 특송사: LOTOS SUPER EXPRESS (LSE)")
+st.caption("기준: 의왕물류센터 출고일 ~ 배송 완료일 | 대상: LOTOS SUPER EXPRESS (LSE)")
 st.markdown("---")
 
-# 1. 상단: 배송단계 구간 메트릭 카드 (2번 사진 스타일)
-st.subheader(f"🚚 배송단계 5구간 분석 ({selected_batch} : {len(df)}건)")
+st.subheader("🚚 배송단계 5구간 분석 (" + selected_batch + " : " + str(len(df)) + "건)")
 
-avg_wait = df['선적대기'].mean()
-avg_trans = df['국제운송'].mean()
-avg_customs = df['통관'].mean()
-avg_lastmile = df['라스트마일'].mean()
-avg_total = df['총리드타임'].mean()
+avg_wait = df["선적대기"].mean()
+avg_trans = df["국제운송"].mean()
+avg_customs = df["통관"].mean()
+avg_lastmile = df["라스트마일"].mean()
+avg_total = df["총리드타임"].mean()
 
-# 가장 소요일수가 높은 구간에 병목 표시
-stage_dict = {
-    "선적대기": avg_wait,
-    "통관": avg_customs,
-    "라스트마일": avg_lastmile
-}
+stage_dict = {"선적대기": avg_wait, "통관": avg_customs, "라스트마일": avg_lastmile}
 bottleneck_stage = max(stage_dict, key=stage_dict.get)
 
 c1, c2, c3, c4, c5 = st.columns(5)
-
 with c1:
-    badge = '
+    b1 = " [⚠️ 병목]" if bottleneck_stage == "선적대기" else ""
+    st.metric("1. 출고 → 선적대기" + b1, f"{avg_wait:.1f}일", "의왕출고 → 출항")
+with c2:
+    st.metric("2. 국제운송", f"{avg_trans:.1f}일", "출항 → 일본도착")
+with c3:
+    b3 = " [⚠️ 병목]" if bottleneck_stage == "통관" else ""
+    st.metric("3. 일본 통관" + b3, f"{avg_customs:.1f}일", "도착 → 통관완료")
+with c4:
+    b4 = " [⚠️ 병목]" if bottleneck_stage == "라스트마일" else ""
+    st.metric("4. 라스트마일" + b4, f"{avg_lastmile:.1f}일", "통관완료 → 배송완료")
+with c5:
+    st.metric("🎯 총 리드타임", f"{avg_total:.1f}일", "의왕출고 ~ 배송완료")
+
+st.markdown("
