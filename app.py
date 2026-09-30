@@ -115,13 +115,13 @@ def load_data(uploaded_file=None):
 
     df["지연구간"] = df.apply(find_delay_segment, axis=1)
 
-    bins =
-    labels = ["0~2일", "2~4일", "4~6일", "6~8일", "8~10일", "10~15일", "15~20일", "20~30일", "30일+"]
-    df["리드타임구간"] = pd.cut(df["총리드타임"], bins=bins, labels=labels, right=False)
+    bin_list = (0, 2, 4, 6, 8, 10, 15, 20, 30, 100)
+    label_list = ("0~2일", "2~4일", "4~6일", "6~8일", "8~10일", "10~15일", "15~20일", "20~30일", "30일+")
+    df["리드타임구간"] = pd.cut(df["총리드타임"], bins=bin_list, labels=label_list, right=False)
 
     return df
 
-st.sidebar.title("⚙️ 필터 및 설정")
+st.sidebar.title("필터 및 설정")
 uploaded_file = st.sidebar.file_uploader("새 엑셀/CSV 데이터 업로드", type=["csv", "xlsx"])
 df_raw = load_data(uploaded_file)
 
@@ -137,11 +137,11 @@ elif selected_batch == "3차 (9/15 출고)":
 else:
     df = df_raw.copy()
 
-st.title("📊 LOTOS 특송 리드타임 분석 대시보드")
+st.title("LOTOS 특송 리드타임 분석 대시보드")
 st.caption("기준: 의왕물류센터 출고일 ~ 배송 완료일 | 대상: LOTOS SUPER EXPRESS (LSE)")
-st.markdown("---")
+st.divider()
 
-st.subheader("🚚 배송단계 5구간 분석 (" + selected_batch + " : " + str(len(df)) + "건)")
+st.subheader("배송단계 5구간 분석 (" + selected_batch + " : " + str(len(df)) + "건)")
 
 avg_wait = df["선적대기"].mean()
 avg_trans = df["국제운송"].mean()
@@ -154,17 +154,137 @@ bottleneck_stage = max(stage_dict, key=stage_dict.get)
 
 c1, c2, c3, c4, c5 = st.columns(5)
 with c1:
-    b1 = " [⚠️ 병목]" if bottleneck_stage == "선적대기" else ""
+    b1 = " [병목]" if bottleneck_stage == "선적대기" else ""
     st.metric("1. 출고 → 선적대기" + b1, f"{avg_wait:.1f}일", "의왕출고 → 출항")
 with c2:
     st.metric("2. 국제운송", f"{avg_trans:.1f}일", "출항 → 일본도착")
 with c3:
-    b3 = " [⚠️ 병목]" if bottleneck_stage == "통관" else ""
+    b3 = " [병목]" if bottleneck_stage == "통관" else ""
     st.metric("3. 일본 통관" + b3, f"{avg_customs:.1f}일", "도착 → 통관완료")
 with c4:
-    b4 = " [⚠️ 병목]" if bottleneck_stage == "라스트마일" else ""
+    b4 = " [병목]" if bottleneck_stage == "라스트마일" else ""
     st.metric("4. 라스트마일" + b4, f"{avg_lastmile:.1f}일", "통관완료 → 배송완료")
 with c5:
-    st.metric("🎯 총 리드타임", f"{avg_total:.1f}일", "의왕출고 ~ 배송완료")
+    st.metric("총 리드타임", f"{avg_total:.1f}일", "의왕출고 ~ 배송완료")
 
-st.markdown("
+st.write("")
+
+col_stat1, col_stat2 = st.columns(2)
+
+with col_stat1:
+    st.subheader("리드타임 기본 통계 수치")
+    stat_records = []
+    for b in ["1차", "2차", "3차", "전체"]:
+        sub = df_raw if b == "전체" else df_raw[df_raw["차수"] == b]
+        lt = sub["총리드타임"]
+        stat_records.append({
+            "차수": b,
+            "건수": str(len(sub)) + "건",
+            "평균값": f"{lt.mean():.2f}일",
+            "중간값(Median)": f"{lt.median():.1f}일",
+            "최소/최대": f"{lt.min()}일 / {lt.max()}일",
+            "p90(상위 90%)": f"{np.percentile(lt, 90):.1f}일"
+        })
+    st.dataframe(pd.DataFrame(stat_records), hide_index=True, use_container_width=True)
+
+with col_stat2:
+    st.subheader("구간별 평균 소요일 (일)")
+    stage_records = []
+    for b in ["1차", "2차", "3차", "전체"]:
+        sub = df_raw if b == "전체" else df_raw[df_raw["차수"] == b]
+        stage_records.append({
+            "차수": b,
+            "선적대기": f"{sub['선적대기'].mean():.2f}일",
+            "국제운송": f"{sub['국제운송'].mean():.2f}일",
+            "통관소요": f"{sub['통관'].mean():.2f}일",
+            "라스트마일": f"{sub['라스트마일'].mean():.2f}일",
+            "총 리드타임": f"{sub['총리드타임'].mean():.2f}일"
+        })
+    st.dataframe(pd.DataFrame(stage_records), hide_index=True, use_container_width=True)
+
+st.divider()
+
+chart_col1, chart_col2 = st.columns(2)
+
+with chart_col1:
+    st.subheader("리드타임 분포 (" + selected_batch + ")")
+    all_bins = ["0~2일", "2~4일", "4~6일", "6~8일", "8~10일", "10~15일", "15~20일", "20~30일", "30일+"]
+    dist_series = df["리드타임구간"].value_counts().reindex(all_bins, fill_value=0)
+    df_dist = pd.DataFrame({"구간": dist_series.index, "건수": dist_series.values})
+
+    fig_dist = px.bar(
+        df_dist, x="구간", y="건수", text="건수",
+        color_discrete_sequence=["#ff9800"], template="plotly_dark"
+    )
+    fig_dist.update_layout(
+        plot_bgcolor="#131722", paper_bgcolor="#131722",
+        margin=dict(l=20, r=20, t=30, b=20),
+        yaxis=dict(gridcolor="#2e3546"), xaxis=dict(gridcolor="#2e3546")
+    )
+    fig_dist.update_traces(textposition="outside")
+    st.plotly_chart(fig_dist, use_container_width=True)
+
+with chart_col2:
+    st.subheader("배송단계별 구성비 (차수별 소요일 누적)")
+    stages_data = []
+    for b in ["1차", "2차", "3차"]:
+        sub = df_raw[df_raw["차수"] == b]
+        stages_data.extend([
+            {"차수": b, "구간": "1.선적대기", "소요일": sub["선적대기"].mean()},
+            {"차수": b, "구간": "2.국제운송", "소요일": sub["국제운송"].mean()},
+            {"차수": b, "구간": "3.통관", "소요일": sub["통관"].mean()},
+            {"차수": b, "구간": "4.라스트마일", "소요일": sub["라스트마일"].mean()},
+        ])
+    df_comp = pd.DataFrame(stages_data)
+
+    fig_comp = px.bar(
+        df_comp, x="차수", y="소요일", color="구간",
+        template="plotly_dark",
+        color_discrete_map={
+            "1.선적대기": "#3b82f6",
+            "2.국제운송": "#8b5cf6",
+            "3.통관": "#10b981",
+            "4.라스트마일": "#f59e0b"
+        }
+    )
+    fig_comp.update_layout(
+        plot_bgcolor="#131722", paper_bgcolor="#131722",
+        margin=dict(l=20, r=20, t=30, b=20),
+        yaxis=dict(gridcolor="#2e3546", title="소요일수 (일)"),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+    )
+    st.plotly_chart(fig_comp, use_container_width=True)
+
+st.divider()
+
+st.subheader("리드타임 5일 이상 건 상세 및 지연 원인")
+st.caption("의왕 출고일 기준 배송 완료까지 5일 이상 소요된 건의 지역, 지연 단계 및 이슈 내역입니다.")
+
+df_delay = df[df["총리드타임"] >= 5].copy()
+df_delay = df_delay.sort_values(by="총리드타임", ascending=False)
+
+col_view = [
+    "주문번호", "차수", "도도부현", "총리드타임",
+    "선적대기", "국제운송", "통관", "라스트마일",
+    "지연구간", "이슈번호", "확인필요유형"
+]
+
+st.dataframe(
+    df_delay[col_view].rename(columns={
+        "총리드타임": "총리드타임(일)",
+        "선적대기": "선적대기(일)",
+        "국제운송": "국제운송(일)",
+        "통관": "통관(일)",
+        "라스트마일": "현지배송(일)"
+    }),
+    use_container_width=True,
+    hide_index=True
+)
+
+csv = df_delay[col_view].to_csv(index=False).encode("utf-8-sig")
+st.download_button(
+    label="5일 이상 지연건 데이터 CSV 다운로드",
+    data=csv,
+    file_name="lotos_delayed_shipments_" + datetime.now().strftime("%Y%m%d") + ".csv",
+    mime="text/csv"
+)
