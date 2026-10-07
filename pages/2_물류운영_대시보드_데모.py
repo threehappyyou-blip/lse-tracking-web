@@ -152,7 +152,7 @@ const NAV=[['종합','top'],['운영관제','top',1],['입하','p-inb'],['입고
 let navOn='종합';
 function renderNav(){$('#lnav').style.display=tab==='live'?'':'none';$('#lnav').innerHTML=NAV.map(n=>`<button class="ln ${n[0]===navOn?'on':''} ${n[2]?'alert':''}" data-n="${n[0]}">${n[0]}</button>`).join('');
  document.querySelectorAll('.ln').forEach(b=>b.onclick=()=>{const n=NAV.find(x=>x[0]===b.dataset.n);navOn=n[0];
-  if(n[1]==='lead'){toast('배송 리드타임 분석은 왼쪽 메뉴의 app 페이지에서 볼 수 있어요');renderNav();return;}
+  if(n[1]==='lead'){toast('리드타임 상세 분석 화면은 데모에서 제공하지 않아요');renderNav();return;}
   if(n[1]==='top'){window.scrollTo({top:0,behavior:'smooth'});renderNav();return;}
   flashId=n[1];flashUntil=Date.now()+1600;render();const el=document.getElementById(n[1]);if(el)el.scrollIntoView({behavior:'smooth',block:'center'});});}
 const fl=id=>(flashId===id&&Date.now()<flashUntil)?'flash':'';
