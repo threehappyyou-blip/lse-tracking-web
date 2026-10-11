@@ -45,6 +45,7 @@ CSS = """
 .pf .row .k{font-size:12px;font-weight:800;color:#8a909a;padding-top:2px}
 .pf .row ul{margin:0;padding-left:16px}.pf .row li{font-size:13.5px;line-height:1.7;color:#30343a}
 .pf .row.prob .k{color:#e8435a}.pf .row.sol .k{color:#3b82f6}.pf .row.eff .k{color:#16a34a}
+.pf .wide{margin-top:16px}.pf .cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}.pf .cols3 .row{grid-template-columns:1fr;gap:6px;align-content:start}
 .pf .three{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .pf .pr .ic{width:40px;height:40px;border-radius:12px;background:#fdecef;color:#e8435a;display:grid;place-items:center;font-size:18px;margin-bottom:14px}
 .pf .pr b{display:block;font-size:16px;margin-bottom:6px;color:#1b1d21}
@@ -56,7 +57,7 @@ CSS = """
 [data-testid="stPageLink"] a{background:#e8435a;border-radius:14px;padding:14px 18px !important;justify-content:center}
 [data-testid="stPageLink"] a p,[data-testid="stPageLink"] a span{color:#fff !important;font-weight:700;font-size:15px}
 [data-testid="stPageLink"] a:hover{background:#d6324a}
-@media(max-width:820px){.pf h1{font-size:30px}.pf .q,.pf .two,.pf .three{grid-template-columns:1fr}.pf .q .arrow{transform:rotate(90deg);height:40px}.pf .chain{flex-direction:column}.pf .chain .sep{width:auto;height:22px;transform:rotate(90deg)}}
+@media(max-width:820px){.pf h1{font-size:30px}.pf .q,.pf .two,.pf .three,.pf .cols3{grid-template-columns:1fr}.pf .q .arrow{transform:rotate(90deg);height:40px}.pf .chain{flex-direction:column}.pf .chain .sep{width:auto;height:22px;transform:rotate(90deg)}}
 </style>
 """
 
@@ -74,7 +75,7 @@ html("""
 <div class="eyebrow">PORTFOLIO · 물류 운영 시스템</div>
 <h1>관리자가 덜 찾고, 덜 기다리고,<br><em>더 빨리 판단하게</em> 만드는 도구</h1>
 <p class="lead">구매대행 물류팀에서 일하며 매일 반복되던 불편을 직접 시스템으로 바꿨습니다.
-흩어진 통관 문의를 한 흐름으로 묶은 <b>통관관리 시스템</b>과, 공정별 병목을 실시간으로 보여주는 <b>물류 운영 대시보드</b>입니다.</p>
+흩어진 통관 문의를 한 흐름으로 묶은 <b>통관관리 시스템</b>, 사기 전에 통관 문제를 미리 확인하는 <b>통관 확인 도구</b>, 공정별 병목을 실시간으로 보여주는 <b>물류 운영 대시보드</b>입니다.</p>
 <div class="meta"><span>기획 · 설계 · 개발 1인</span><span>현업 실사용</span><span>이 사이트는 가상 데이터 데모</span></div>
 </div>
 """)
@@ -122,7 +123,7 @@ html("""
 # ---------- 4. 두 개의 도구 ----------
 html("""
 <div class="pf">
-<h2>그래서 만든 두 가지 도구</h2>
+<h2>그래서 만든 세 가지 도구</h2>
 <p class="sec-sub">각각 "어떤 불편에서 출발했고, 무엇으로 풀었고, 무엇이 좋아지는가"로 정리했습니다.</p>
 <div class="two">
 <div class="card tool">
@@ -160,6 +161,27 @@ html("""
 <li>회의·보고용 수작업 집계 시간 절감</li></ul></div>
 </div>
 </div>
+<div class="wide">
+<div class="card tool">
+<span class="tag" style="background:#e9f7ef;color:#16a34a">🔎 통관 확인 도구</span>
+<h3>사기 전에, 받을 때, 한 번에 확인</h3>
+<p class="one">상품명 검색 → 관련 규정 · 유사 사례 → 위험 신호 → 확인할 항목 체크리스트 → 답이 없으면 통관관리로 문의 등록</p>
+<div class="cols3">
+<div class="row prob"><div class="k">문제</div><ul>
+<li>통관 사례가 엑셀·메일에 흩어지고, 같은 사례가 여러 곳에 중복으로 남아 있음</li>
+<li>구매 시점에는 통관 문제 여부를 알 수 없어, 반송·폐기된 뒤에야 알게 됨</li>
+<li>입고 검수 때 무엇을 볼지가 담당자 경험에 의존</li></ul></div>
+<div class="row sol"><div class="k">해결</div><ul>
+<li>검색하면 규정과 유사 사례를 묶어 "주의 높음 · 주의 · 해당 없음"으로 먼저 알려줌</li>
+<li>중복 사례는 1건으로 병합하고, 판정이 엇갈리는 건은 "확인 필요"로 표시</li>
+<li>구매팀·물류팀 탭을 나눠, 구매 전 확인과 입고 검수 체크리스트를 따로 제공</li></ul></div>
+<div class="row eff"><div class="k">효과</div><ul>
+<li>구매 단계에서 통관 불가 품목을 걸러 반송·폐기 비용 감소</li>
+<li>검수 기준이 사람마다 달라지지 않고 통일됨</li>
+<li>문의 결과가 기준에 쌓여, 쓸수록 확인이 더 정확해지는 선순환</li></ul></div>
+</div>
+</div>
+</div>
 </div>
 """)
 
@@ -193,8 +215,10 @@ html("""
 
 # ---------- 7. 바로가기 ----------
 html('<div class="pf"><div class="cta-h">직접 사용해 보기</div></div>')
-c1, c2 = st.columns(2)
+c1, c2, c3 = st.columns(3)
 with c1:
-    st.page_link("pages/1_통관관리_데모.py", label="통관관리 시스템 데모 →", icon="🛃", use_container_width=True)
+    st.page_link("pages/2_물류운영_대시보드_데모.py", label="물류 운영 대시보드 →", icon="📦", use_container_width=True)
 with c2:
-    st.page_link("pages/2_물류운영_대시보드_데모.py", label="물류 운영 대시보드 데모 →", icon="📦", use_container_width=True)
+    st.page_link("pages/1_통관관리_데모.py", label="통관관리 시스템 →", icon="🛃", use_container_width=True)
+with c3:
+    st.page_link("pages/3_통관확인_도구.py", label="통관 확인 도구 →", icon="🔎", use_container_width=True)
