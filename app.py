@@ -17,13 +17,13 @@ st.markdown(
 
 nav = st.navigation(
     {
+        "데모": [
+            st.Page("pages/2_물류운영_대시보드_데모.py", title="물류운영 대시보드 데모", icon="📦"),
+            st.Page("pages/1_통관관리_데모.py", title="통관관리 데모", icon="🛃"),
+            st.Page("pages/3_통관확인_도구.py", title="통관 확인 도구", icon="🔎"),
+        ],
         "소개": [
             st.Page("pages/0_프로젝트_소개.py", title="만든 이유", icon="💡", default=True),
-        ],
-        "데모": [
-            st.Page("pages/1_통관관리_데모.py", title="통관관리 데모", icon="🛃"),
-            st.Page("pages/2_물류운영_대시보드_데모.py", title="물류운영 대시보드 데모", icon="📦"),
-            st.Page("pages/3_통관확인_도구.py", title="통관 확인 도구", icon="🔎"),
         ],
     }
 )
