@@ -15,9 +15,16 @@ st.markdown(
 [data-testid="stVerticalBlock"]{gap:0 !important}
 iframe{height:calc(100vh - 2.6rem) !important;display:block;border:0}
 footer{display:none}
+[data-testid="stPageLink"]{position:fixed;top:.55rem;right:10rem;z-index:1000000;width:auto !important}
+[data-testid="stPageLink"] a{background:#e8435a;border-radius:999px;padding:.3rem .95rem;text-decoration:none}
+[data-testid="stPageLink"] a:hover{background:#d3374d}
+[data-testid="stPageLink"] a p, [data-testid="stPageLink"] a span{color:#fff !important;font-weight:700;font-size:.85rem;margin:0}
 </style>""",
     unsafe_allow_html=True,
 )
+
+# 확인에서 답이 안 나오면 통관관리 데모로 이어지는 버튼 (오른쪽 위 고정)
+st.page_link("pages/1_통관관리_데모.py", label="통관관리로 문의 등록하기", icon="🛃")
 
 # 모든 사례·규정·한도는 가상 데이터입니다. (실제 업무용은 같은 구조로 교체)
 DATA = json.loads(r'''{
@@ -545,6 +552,7 @@ p{margin:0}
 .lv{font-size:22px;font-weight:800;letter-spacing:-.5px}
 .banner[data-level="high"] .lv{color:var(--bad)}.banner[data-level="mid"] .lv{color:var(--warn)}.banner[data-level="low"] .lv{color:var(--ok)}
 .why{font-size:14px}
+.next{font-size:13px;background:#fff;border:1px dashed #e8a3ae;border-radius:10px;padding:8px 12px;color:#7a2634}
 .dist{display:flex;height:10px;border-radius:999px;overflow:hidden;background:#e4e4ea}
 .dist div{height:100%;min-width:3px}
 .legend{display:flex;flex-wrap:wrap;gap:4px 14px;color:var(--sub);font-size:12px}
@@ -591,6 +599,7 @@ td.v-bad{color:var(--bad);font-weight:700;white-space:nowrap}td.v-warn{color:var
   <div class="out buy" id="out">
     <div class="banner" id="banner" data-level="none">
       <div class="lv" id="lv"></div><p class="why" id="why"></p>
+      <p class="next" id="next" hidden>답이 안 나오거나 확인이 더 필요하면, 오른쪽 위 <b>통관관리로 문의 등록하기</b> 버튼으로 문의를 등록하세요. 답변과 승인이 끝나면 이 기준에 쌓입니다.</p>
       <div id="distbox" hidden><div class="dist" id="dist"></div><div class="legend" id="legend"></div></div>
     </div>
     <div class="card lead" id="lead" hidden><h2 id="lead-h"></h2><p class="sub" id="lead-sub"></p><ul class="reasons" id="reasons"></ul></div>
@@ -728,7 +737,7 @@ function draw() {
   sel.value = cur;
   const a = analyze(), banner = $('banner');
   if (a.empty) {
-    banner.dataset.level = 'none'; $('lv').textContent = '상품명을 입력하세요';
+    banner.dataset.level = 'none'; $('next').hidden = true; $('lv').textContent = '상품명을 입력하세요';
     $('why').textContent = '상품명이나 키워드를 넣으면 관련 규정, 수량·중량 한도, 과거 사례를 한 번에 보여줍니다.';
     drawDist(null); drawLead(null);
     fillTable('tb-rules', ['kind','item','detail','note','status'], [], ['status'], 'em-rules');
@@ -736,7 +745,7 @@ function draw() {
     fillTable('tb-cases', ['category','name','verdict','alt','reason_all','qty','issue'], [], ['verdict','alt'], 'em-cases');
     return;
   }
-  banner.dataset.level = a.level; $('lv').textContent = LABEL[view][a.level]; $('why').textContent = whyText(a);
+  banner.dataset.level = a.level; $('next').hidden = a.level === 'low'; $('lv').textContent = LABEL[view][a.level]; $('why').textContent = whyText(a);
   drawDist(a); drawLead(a);
   const xFirst = (x, y) => (x.status === 'X' ? 0 : 1) - (y.status === 'X' ? 0 : 1);
   const aIds = new Set(a.ruleA.map((r) => r.id));
