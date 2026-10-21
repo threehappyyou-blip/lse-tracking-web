@@ -75,7 +75,7 @@ html("""
 <div class="eyebrow">PORTFOLIO · 물류 운영 시스템</div>
 <h1>관리자가 덜 찾고, 덜 기다리고,<br><em>더 빨리 판단하게</em> 만드는 도구</h1>
 <p class="lead">구매대행 물류팀에서 일하며 매일 반복되던 불편을 직접 시스템으로 바꿨습니다.
-흩어진 통관 문의를 한 흐름으로 묶은 <b>통관관리 시스템</b>, 사기 전에 통관 문제를 미리 확인하는 <b>통관 확인 도구</b>, 공정별 병목을 실시간으로 보여주는 <b>물류 운영 대시보드</b>입니다.</p>
+흩어진 통관 문의를 한 흐름으로 묶은 <b>통관관리 시스템</b>, 사기 전에 통관 문제를 미리 확인하는 <b>통관 확인 도구</b>, 통관 지연을 룰로 걸러 "오늘 할 일"로 바꿔주는 <b>통관 예외관리 레이더</b>, 공정별 병목을 실시간으로 보여주는 <b>물류 운영 대시보드</b>입니다.</p>
 <div class="meta"><span>기획 · 설계 · 개발 1인</span><span>현업 실사용</span><span>이 사이트는 가상 데이터 데모</span></div>
 </div>
 """)
@@ -123,7 +123,7 @@ html("""
 # ---------- 4. 두 개의 도구 ----------
 html("""
 <div class="pf">
-<h2>그래서 만든 세 가지 도구</h2>
+<h2>그래서 만든 네 가지 도구</h2>
 <p class="sec-sub">각각 "어떤 불편에서 출발했고, 무엇으로 풀었고, 무엇이 좋아지는가"로 정리했습니다.</p>
 <div class="two">
 <div class="card tool">
@@ -182,6 +182,30 @@ html("""
 </div>
 </div>
 </div>
+<div class="wide">
+<div class="card tool">
+<span class="tag" style="background:#fff4de;color:#b86e00">📡 통관 예외관리 레이더</span>
+<h3>"무엇이 막혔나"가 아니라 "오늘 누가 무엇을 해야 하나"를</h3>
+<p class="one">통관 대상 457건 → 지연 기준 룰 → 오늘의 액션 54건 · 지연 70건을 "공을 누가 갖고 있나"로 분해 · 특송사 구간별 리드타임 리포트 자동 생성</p>
+<div class="cols3">
+<div class="row prob"><div class="k">문제</div><ul>
+<li>통관이 멈춘 건을 찾으려면 엑셀·메신저·메일을 뒤져야 하고, 며칠째인지 사람이 세어야 함</li>
+<li>재문의 시점이 담당자 감에 달려 있어 늦거나, 이미 보낸 문의를 또 보냄</li>
+<li>열린 이슈도 문의도 없는 "사각지대" 건은 아무도 모른 채 방치</li></ul></div>
+<div class="row sol"><div class="k">해결</div><ul>
+<li>단계별 지연 기준과 재문의 사다리(5·10·13·15일)를 룰로 정해, 457건을 오늘 처리할 54건으로 압축</li>
+<li>지연 건을 사각지대·우리 차례·파트너 대기 등으로 나누고, 문의가 없는 건은 이슈별로 묶어 일괄 문의</li>
+<li>건별 구간 시각만 쌓이면 특송사 비교 리포트를 표와 요약 문장으로 자동 생성</li></ul></div>
+<div class="row eff"><div class="k">효과</div><ul>
+<li>찾고 세고 다시 묻는 시간을 줄이고, 후속 누락과 중복 발송 방지</li>
+<li>룰 기준을 슬라이더로 바꿔 업무량 변화를 미리 시뮬레이션</li>
+<li>느린 구간과 요일·공휴일 영향을 근거로 특송사 협의와 고객 안내 예상일 조정</li></ul></div>
+</div>
+</div>
+</div>
+<div class="wide">
+<div class="card" style="font-size:13.5px;color:#4b5058;line-height:1.7"><b style="color:#1b1d21">세 도구는 한 흐름입니다.</b> 통관 확인 도구(구매·입고 전 예방) → 통관 예외관리 레이더(진행 중 감지·지시) → 통관관리 시스템(이슈 처리·기준 축적)</div>
+</div>
 </div>
 """)
 
@@ -215,10 +239,12 @@ html("""
 
 # ---------- 7. 바로가기 ----------
 html('<div class="pf"><div class="cta-h">직접 사용해 보기</div></div>')
-c1, c2, c3 = st.columns(3)
+c1, c2, c3, c4 = st.columns(4)
 with c1:
     st.page_link("pages/2_물류운영_대시보드_데모.py", label="물류 운영 대시보드 →", icon="📦", use_container_width=True)
 with c2:
     st.page_link("pages/1_통관관리_데모.py", label="통관관리 시스템 →", icon="🛃", use_container_width=True)
 with c3:
     st.page_link("pages/3_통관확인_도구.py", label="통관 확인 도구 →", icon="🔎", use_container_width=True)
+with c4:
+    st.page_link("pages/4_통관_예외관리_레이더.py", label="통관 예외관리 레이더 →", icon="📡", use_container_width=True)
