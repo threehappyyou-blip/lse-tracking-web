@@ -23,6 +23,9 @@ nav = st.navigation(
             st.Page("pages/3_통관확인_도구.py", title="통관 확인 도구", icon="🔎"),
             st.Page("pages/4_통관_예외관리_레이더.py", title="통관 예외관리 레이더", icon="📡"),
         ],
+        "AX 도구": [
+            st.Page("pages/5_아침_업무_브리핑.py", title="아침 업무 브리핑", icon="☀️"),
+        ],
         "소개": [
             st.Page("pages/0_프로젝트_소개.py", title="만든 이유", icon="💡", default=True),
         ],
