@@ -75,7 +75,7 @@ html("""
 <div class="eyebrow">PORTFOLIO · 물류 운영 시스템</div>
 <h1>관리자가 덜 찾고, 덜 기다리고,<br><em>더 빨리 판단하게</em> 만드는 도구</h1>
 <p class="lead">구매대행 물류팀에서 일하며 매일 반복되던 불편을 직접 시스템으로 바꿨습니다.
-흩어진 통관 문의를 한 흐름으로 묶은 <b>통관관리 시스템</b>, 사기 전에 통관 문제를 미리 확인하는 <b>통관 확인 도구</b>, 통관 지연을 룰로 걸러 "오늘 할 일"로 바꿔주는 <b>통관 예외관리 레이더</b>, 공정별 병목을 실시간으로 보여주는 <b>물류 운영 대시보드</b>입니다.</p>
+흩어진 통관 문의를 한 흐름으로 묶은 <b>통관관리 시스템</b>, 사기 전에 통관 문제를 미리 확인하는 <b>통관 확인 도구</b>, 통관 지연을 룰로 걸러 "오늘 할 일"로 바꿔주는 <b>통관 예외관리 레이더</b>, 공정별 병목을 실시간으로 보여주는 <b>물류 운영 대시보드</b>, 흩어진 요청을 아침 한 화면으로 모아 주는 <b>아침 업무 브리핑</b>입니다.</p>
 <div class="meta"><span>기획 · 설계 · 개발 1인</span><span>현업 실사용</span><span>이 사이트는 가상 데이터 데모</span></div>
 </div>
 """)
@@ -209,6 +209,33 @@ html("""
 </div>
 """)
 
+# ---------- 4-2. 업무 브리핑 ----------
+html("""
+<div class="pf">
+<div class="wide">
+<div class="card tool">
+<span class="tag" style="background:#e6f6e6;color:#006300">☀️ 아침 업무 브리핑 · AX 도구</span>
+<h3>"언제까지 해 달라"는 말을 놓치지 않게, 출근하면 한 화면으로</h3>
+<p class="one">Slack·메일·회의록 메시지 62건 → 요청 4종으로 분류 · 마감 추출 → 업무 관리 표의 위생 점검까지 한 번에</p>
+<div class="cols3">
+<div class="row prob"><div class="k">문제</div><ul>
+<li>"○일까지 부탁드립니다" 요청이 채널·메일·회의에 흩어져 있어, 사람이다 보니 깜빡하는 일이 생김</li>
+<li>해야 하는 일인지, 알고만 있으면 되는 공지인지 매번 읽고 판단해야 함</li>
+<li>업무 관리 표는 담당·기한이 비거나 "제안" 상태로 방치되어도 아무도 모름. 자동 수집이 조용히 멈추면 "요청이 없는 것"처럼 보임</li></ul></div>
+<div class="row sol"><div class="k">해결</div><ul>
+<li>메시지를 해야 할 일 / 답장 대기 / 확인 필요 / 알고만 됨으로 나누고, 보낸 날짜를 기준으로 마감을 계산해 "오늘 먼저 볼 것"으로 정렬</li>
+<li>요청은 먼저 "제안"으로만 등록하고 사람이 확정. 완료는 후속 메시지 근거와 함께 "후보"로만 표시</li>
+<li>담당 없음·기한 없음·제안 방치를 점검하고, 수집이 실패한 채널은 화면 맨 위에 먼저 경고</li></ul></div>
+<div class="row eff"><div class="k">효과</div><ul>
+<li>아침에 메신저·메일·노션을 차례로 열어 확인하던 일을 한 화면으로 줄임</li>
+<li>답장 없는 요청의 재촉 시점과 마감 임박 건을 기준값(슬라이더)대로 놓치지 않게 알림</li>
+<li>분류 정확도(틀린 판정 포함)를 공개해, 어디까지 믿고 어디서 사람이 확인해야 하는지 분명해짐</li></ul></div>
+</div>
+</div>
+</div>
+</div>
+""")
+
 # ---------- 5. 설계 원칙 ----------
 html("""
 <div class="pf">
@@ -239,7 +266,7 @@ html("""
 
 # ---------- 7. 바로가기 ----------
 html('<div class="pf"><div class="cta-h">직접 사용해 보기</div></div>')
-c1, c2, c3, c4 = st.columns(4)
+c1, c2, c3, c4, c5 = st.columns(5)
 with c1:
     st.page_link("pages/2_물류운영_대시보드_데모.py", label="물류 운영 대시보드 →", icon="📦", use_container_width=True)
 with c2:
@@ -248,3 +275,5 @@ with c3:
     st.page_link("pages/3_통관확인_도구.py", label="통관 확인 도구 →", icon="🔎", use_container_width=True)
 with c4:
     st.page_link("pages/4_통관_예외관리_레이더.py", label="통관 예외관리 레이더 →", icon="📡", use_container_width=True)
+with c5:
+    st.page_link("pages/5_아침_업무_브리핑.py", label="아침 업무 브리핑 →", icon="☀️", use_container_width=True)
