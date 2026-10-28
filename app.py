@@ -25,6 +25,7 @@ nav = st.navigation(
         ],
         "AX 도구": [
             st.Page("pages/5_아침_업무_브리핑.py", title="아침 업무 브리핑", icon="☀️"),
+            st.Page("pages/6_BO_업무_포털.py", title="BO 업무 포털", icon="🗂️"),
         ],
         "소개": [
             st.Page("pages/0_프로젝트_소개.py", title="만든 이유", icon="💡", default=True),
