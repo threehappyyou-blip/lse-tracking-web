@@ -75,7 +75,7 @@ html("""
 <div class="eyebrow">PORTFOLIO · 물류 운영 시스템</div>
 <h1>관리자가 덜 찾고, 덜 기다리고,<br><em>더 빨리 판단하게</em> 만드는 도구</h1>
 <p class="lead">구매대행 물류팀에서 일하며 매일 반복되던 불편을 직접 시스템으로 바꿨습니다.
-흩어진 통관 문의를 한 흐름으로 묶은 <b>통관관리 시스템</b>, 사기 전에 통관 문제를 미리 확인하는 <b>통관 확인 도구</b>, 통관 지연을 룰로 걸러 "오늘 할 일"로 바꿔주는 <b>통관 예외관리 레이더</b>, 공정별 병목을 실시간으로 보여주는 <b>물류 운영 대시보드</b>, 흩어진 요청을 아침 한 화면으로 모아 주는 <b>아침 업무 브리핑</b>입니다.</p>
+흩어진 통관 문의를 한 흐름으로 묶은 <b>통관관리 시스템</b>, 사기 전에 통관 문제를 미리 확인하는 <b>통관 확인 도구</b>, 통관 지연을 룰로 걸러 "오늘 할 일"로 바꿔주는 <b>통관 예외관리 레이더</b>, 공정별 병목을 실시간으로 보여주는 <b>물류 운영 대시보드</b>, 흩어진 요청을 아침 한 화면으로 모아 주는 <b>아침 업무 브리핑</b>, 출장 신청·정산과 세금계산서 점검을 한곳에 모은 <b>BO 업무 포털</b>입니다.</p>
 <div class="meta"><span>기획 · 설계 · 개발 1인</span><span>현업 실사용</span><span>이 사이트는 가상 데이터 데모</span></div>
 </div>
 """)
@@ -236,6 +236,34 @@ html("""
 </div>
 """)
 
+# ---------- 4-3. BO 업무 포털 ----------
+html("""
+<div class="pf">
+<div class="wide">
+<div class="card tool">
+<span class="tag" style="background:#e8f0fe;color:#2f6fd6">🗂️ BO 업무 포털 · AX 도구</span>
+<h3>출장 신청부터 정산, 세금계산서 점검까지 "누가 다음 차례인지"가 보이게</h3>
+<p class="one">출장 관리(신청 · 결재 · 정산 규정 자동 판정) · 세금계산서 발행·수취 대상 점검 · 법무 검토 데스크 · 담당자 찾기를 한 포털로</p>
+<div class="cols3">
+<div class="row prob"><div class="k">문제</div><ul>
+<li>법인마다 출장 신청·정산 방식이 달라, 누가 언제 어디로 가고 얼마를 썼는지 한 번에 보기 어려움</li>
+<li>식비·숙박 상한, 승인 전 지출, 택시 규정 같은 기준을 사람이 영수증마다 계산하고 확인해야 함</li>
+<li>세금계산서는 "발행·수취 대상인지, 기한 안에 처리됐는지"를 월말에 일일이 대조해야 하고, 빠뜨리면 늦게 알게 됨</li></ul></div>
+<div class="row sol"><div class="k">해결</div><ul>
+<li>신청 → 결재(BO 합의·팀장·재무총괄, 기준 금액 이상은 대표) → 정산을 한곳에 두고, 단계마다 다음 차례에게 알리고 "처리할 일"로 모아 보여줌</li>
+<li>영수증 줄마다 규정을 적용해 인정 / 상한까지 인정 / 판단 필요 / 불인정으로 바로 판정하고, 신청 기한·내 정보 누락은 제출 전에 막음</li>
+<li>거래 유형별로 필요한 증빙(세금계산서·계산서·영세율 증빙 등)과 기한(다음 달 10일)을 판정하고, 미발행·합계 불일치·중복 의심·증빙 누락을 찾아 월 마감 체크로 연결</li></ul></div>
+<div class="row eff"><div class="k">효과</div><ul>
+<li>신청부터 지급까지 어디서 멈췄는지 한 화면에서 확인하고, 규정 계산과 재확인 왕복을 줄임</li>
+<li>세금계산서 발행·수취 누락을 월말이 아니라 기한 전에 발견하고, 점검 기준일을 바꿔 임박·기한 지남 건을 미리 확인</li>
+<li>BO에 요청할 때 담당자를 바로 찾고, 법무 검토는 유형별 규칙으로 담당 배정과 회신 기한까지 추적</li></ul></div>
+</div>
+<div style="font-size:12px;color:#8a909a;margin-top:10px">이 화면의 회사명·이름·금액·규정 수치는 모두 가상이며, 세금계산서 판정은 단순화한 데모 규칙입니다(실제 세무 판단 아님).</div>
+</div>
+</div>
+</div>
+""")
+
 # ---------- 5. 설계 원칙 ----------
 html("""
 <div class="pf">
@@ -266,14 +294,17 @@ html("""
 
 # ---------- 7. 바로가기 ----------
 html('<div class="pf"><div class="cta-h">직접 사용해 보기</div></div>')
-c1, c2, c3, c4, c5 = st.columns(5)
-with c1:
+r1 = st.columns(3)
+r2 = st.columns(3)
+with r1[0]:
     st.page_link("pages/2_물류운영_대시보드_데모.py", label="물류 운영 대시보드 →", icon="📦", use_container_width=True)
-with c2:
+with r1[1]:
     st.page_link("pages/1_통관관리_데모.py", label="통관관리 시스템 →", icon="🛃", use_container_width=True)
-with c3:
+with r1[2]:
     st.page_link("pages/3_통관확인_도구.py", label="통관 확인 도구 →", icon="🔎", use_container_width=True)
-with c4:
+with r2[0]:
     st.page_link("pages/4_통관_예외관리_레이더.py", label="통관 예외관리 레이더 →", icon="📡", use_container_width=True)
-with c5:
+with r2[1]:
     st.page_link("pages/5_아침_업무_브리핑.py", label="아침 업무 브리핑 →", icon="☀️", use_container_width=True)
+with r2[2]:
+    st.page_link("pages/6_BO_업무_포털.py", label="BO 업무 포털 →", icon="🗂️", use_container_width=True)
